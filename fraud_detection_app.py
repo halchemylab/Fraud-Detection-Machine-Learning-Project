@@ -27,11 +27,17 @@ if st.button("Predict"):
         'newbalanceDest': [newbalanceDest]
     })
 
-    prediction = model.predict(input_data)
-    
-    st.subheader(f"Prediction Result: {prediction[0]}")
-    
+    with st.spinner('Running fraud prediction...'):
+        prediction = model.predict(input_data)
+
+    st.markdown("---")
+    st.markdown("#### Transaction Summary")
+    st.table(input_data.T.rename(columns={0: 'Value'}))
+
+    st.markdown("---")
     if prediction[0] == 1:
-        st.error("This transaction is likely fraudulent.")
+        st.error("🚨 This transaction is likely fraudulent.", icon="🚨")
+        st.info("Please review the transaction details above.")
     else:
-        st.success("This transaction is likely legitimate.")
+        st.success("✅ This transaction is likely legitimate.", icon="✅")
+        st.info("No fraud detected for the provided transaction.")
